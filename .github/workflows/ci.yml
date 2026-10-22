@@ -26,10 +26,13 @@ jobs:
 
       - name: Run syntax tests
         run: |
+          rc=0
           if [ "${{ matrix.editor }}" = "neovim" ]; then
             nvim --headless --clean -c "set rtp+=$PWD" -c "filetype off" -c "filetype on" \
-              test/fixture.cddl -c "edit!" -S test/probe.vim
+              test/fixture.cddl -c "edit!" -S test/probe.vim || rc=$?
           else
             vim -Es --clean -c "set rtp+=$PWD" -c "filetype off" -c "filetype on" \
-              test/fixture.cddl -c "edit!" -S test/probe.vim
+              test/fixture.cddl -c "edit!" -S test/probe.vim || rc=$?
           fi
+          cat test-results.txt || echo "test-results.txt was not written"
+          exit $rc
