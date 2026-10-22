@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.editor }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        editor: [neovim, vim]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ${{ matrix.editor }}
+        run: |
+          sudo apt-get update
+          if [ "${{ matrix.editor }}" = "neovim" ]; then
+            sudo apt-get install -y neovim
+          else
+            sudo apt-get install -y vim
+          fi
+
+      - name: Run syntax tests
+        run: |
+          if [ "${{ matrix.editor }}" = "neovim" ]; then
+            nvim --headless --clean -c "set rtp+=$PWD" -c "filetype off" -c "filetype on" \
+              test/fixture.cddl -c "edit!" -S test/probe.vim
+          else
+            vim -Es --clean -c "set rtp+=$PWD" -c "filetype off" -c "filetype on" \
+              test/fixture.cddl -c "edit!" -S test/probe.vim
+          fi

@@ -1,0 +1,22 @@
+; fixture comment with TODO marker
+test-rule = {
+  count: uint .size 2,
+  name: tstr,
+  ? note: tstr,
+  data: bstr .cbor payload,
+  payload: b64'aGVsbG8=',
+  hash: h'00ff',
+  flag: true,
+  maybe: nil / undefined,
+  vec: [* tstr],
+  pair: [int, 1..5],
+  ext: 2...8,
+  3 => tstr,
+  wrapped: #6.1(tstr),
+  choice: tstr // bstr,
+  alt: b64p"dGVzdA==" / h"0f",
+}
+group-rule =< ( a: 1, b: 2 )
+enum2 = &( x: 1, y: 2 )
+unwrapped = ~ group-rule
+gen<$t> = { v: $t }
